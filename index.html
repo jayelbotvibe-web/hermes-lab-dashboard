@@ -41,7 +41,7 @@
 <body>
 <div class="container">
   <h1>Hermes Lab — Ubuntu Laptop Dashboard</h1>
-  <div class="subtitle">The bridge between your pentest and forensics labs. One tray icon, two environments.</div>
+  <div class="subtitle">Supervisor pattern — default profile manager routes to pentest and forensics profiles. hermes -z --profile dispatch.</div>
   
   <div class="badge-row">
     <span class="badge">Ubuntu 24.04+</span>
@@ -60,7 +60,7 @@
     </div>
     <div class="step-row">
       <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">2</div>
-      <div class="step-text"><span class="step-auto">[crypttab]</span> Forensics LUKS volume auto-mounts at <code>/home/niel/forensics</code></div>
+      <div class="step-text"><span class="step-auto">[systemd]</span> Docker daemon starts. Pentest containers need manual start via dispatch.</div>
     </div>
     <div class="step-row">
       <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">3</div>
@@ -90,7 +90,7 @@
           <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">3</div>
           <div class="step-text"><span class="step-click">[CLICK]</span> 🔒 VPN ON (when ready to scan targets)</div>
         </div>
-        <div style="margin-top:0.5rem;font-size:0.55rem;color:#64748b">Containers: kali-web (nuclei, ffuf, sqlmap) · kali-net (nmap, msf, crackmapexec) · osint-tools (theHarvester)</div>
+        <div style="margin-top:0.5rem;font-size:0.55rem;color:#64748b">14/14 canary checks • Containers: kali-web (nuclei, ffuf, sqlmap) · kali-net (nmap, msf, cme) · osint-tools (theHarvester) · neo4j (BloodHound)</div>
       </div>
       
       <div class="branch" style="border-color:rgba(167,139,250,0.15)">
@@ -103,19 +103,19 @@
           <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">2</div>
           <div class="step-text">Open Hermes Desktop → switch to forensics profile → new chat</div>
         </div>
-        <div style="margin-top:0.5rem;font-size:0.55rem;color:#64748b">Tools: Volatility 3 · Plaso · MFT · MemProcFS · Sleuthkit · Foremost · 7 more via SIFT VM</div>
+        <div style="margin-top:0.5rem;font-size:0.55rem;color:#64748b">19/19 canary checks • Tools: Volatility3 · Plaso · MFT · MemProcFS · Sleuthkit · Foremost · dc3dd · hashdeep · tshark · RegRipper · via SIFT VM</div>
       </div>
     </div>
   </div>
 
   <div class="status-bar" style="border-color:rgba(52,211,153,0.2)">
-    Both ready: <span style="color:#34d399">🛡️ Pentest ✓</span> &nbsp;|&nbsp; <span style="color:#34d399">🔍 Forensics ✓</span> &nbsp;|&nbsp; <span style="color:#fbbf24">🔒 VPN on demand</span>
+    Dispatch: <span class="step-auto">hermes -z "task" --profile pentest</span> &nbsp;|&nbsp; <span class="step-auto">hermes -z "task" --profile forensics</span>
   </div>
 
   <div class="repos">
     <div class="repo-card" style="border-color:rgba(34,211,238,0.2)">
       <a href="https://github.com/jayelbotvibe-web/hermes-pentest-lab">hermes-pentest-lab</a>
-      <p>22+ tools · Docker · AI subagents · PDF reports</p>
+      <p>14 tools · Docker · supervisor dispatch · ponytail-pruned</p>
     </div>
     <div class="repo-card" style="border-color:rgba(167,139,250,0.2)">
       <a href="https://github.com/jayelbotvibe-web/hermes-lab-dashboard">hermes-lab-dashboard</a>
@@ -123,7 +123,7 @@
     </div>
     <div class="repo-card" style="border-color:rgba(34,211,153,0.2)">
       <a href="https://github.com/jayelbotvibe-web/hermes-forensics-lab">hermes-forensics-lab</a>
-      <p>12 tools · SIFT VM · evidence processing</p>
+      <p>19 tools · SIFT VM · supervisor dispatch · ponytail-pruned</p>
     </div>
   </div>
 
