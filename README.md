@@ -29,6 +29,12 @@ This tray app sits in your system notification area. It shows whether each lab i
 
 [**→ View Boot Flow Diagram**](https://jayelbotvibe-web.github.io/hermes-lab-dashboard/) — interactive HTML showing what happens from power-on to ready-to-work.
 
+[**→ View Manager Architecture**](https://jayelbotvibe-web.github.io/hermes-lab-dashboard/manager-architecture.html) — dark-theme SVG showing how the default profile orchestrates forensics and pentest profiles via one-shot dispatch.
+
+## AI Orchestration Layer
+
+> **New:** [Multi-Profile Manager Guide](MULTI-PROFILE-MANAGER.md) — adds a Supervisor/Orchestrator pattern on top of the labs. One manager profile routes tasks to the forensics and pentest worker profiles via `hermes -z --profile`. No profile switching. One conversation surface.
+
 ## How It Fits Together
 
 ```
@@ -111,7 +117,9 @@ Update paths in the scripts if your username isn't `niel` or vault paths differ.
 | `hermes-tray` | Python Gtk system tray — refreshes every 5s, always on top |
 | `pentest` | Bash wrapper: LUKS keyfile mount → pentest-up.sh → canary |
 | `forensics` | Bash wrapper: forensics-up.sh (LUKS + SIFT VM) |
-| `hermes-lab-boot-flow.html` | Architecture diagram — open in browser |
+| `hermes-lab-boot-flow.html` | Boot flow diagram — open in browser |
+| `manager-architecture.html` | Manager-worker architecture diagram (dark SVG) |
+| `MULTI-PROFILE-MANAGER.md` | Complete guide: setup, dispatch, pitfalls, supervisor pattern |
 
 ## Related Repos
 
