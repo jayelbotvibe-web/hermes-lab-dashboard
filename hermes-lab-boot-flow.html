@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Lab — Boot to Workflow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'JetBrains Mono', 'DejaVu Sans Mono', monospace; background: #020617; min-height: 100vh; padding: 2rem; color: #e2e8f0; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 1.1rem; color: #22d3ee; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 0.7rem; color: #64748b; margin-bottom: 2rem; }
+  
+  .flow { background: rgba(15,23,42,0.6); border: 1px solid #1e293b; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem; }
+  .flow-title { font-size: 0.75rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  
+  .step-row { display: flex; align-items: flex-start; margin-bottom: 0.5rem; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; flex-shrink: 0; margin-right: 0.75rem; margin-top: -2px; }
+  .step-text { font-size: 0.7rem; line-height: 1.6; flex: 1; }
+  .step-cmd { display: inline-block; background: rgba(34,211,238,0.1); border: 1px solid rgba(34,211,238,0.2); border-radius: 0.25rem; padding: 2px 6px; font-size: 0.65rem; color: #22d3ee; margin: 2px 0; }
+  .step-file { color: #a78bfa; font-size: 0.65rem; }
+  .step-auto { color: #34d399; font-size: 0.6rem; font-weight: 600; }
+  .step-user { color: #fbbf24; font-size: 0.6rem; font-weight: 600; }
+  .step-click { color: #fb7185; font-size: 0.6rem; font-weight: 600; }
+  
+  .parallel { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .branch { background: rgba(15,23,42,0.4); border: 1px solid #1e293b; border-radius: 0.5rem; padding: 1.25rem; }
+  .branch-title { font-size: 0.72rem; font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem; }
+  
+  .status-bar { background: rgba(15,23,42,0.4); border: 1px solid #1e293b; border-radius: 0.5rem; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .status-dot { width: 10px; height: 10px; border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  
+  .legend { margin-top: 1.5rem; display: flex; gap: 1.5rem; font-size: 0.6rem; color: #64748b; }
+  .legend span { margin-right: 0.25rem; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Hermes Lab — Boot to Workflow</h1>
+  <div class="subtitle">What happens from power-on → ready to pentest/forensics</div>
+
+  <!-- PHASE 1: AUTO -->
+  <div class="flow">
+    <div class="flow-title"><div class="dot" style="background:#34d399"></div>PHASE 1 — Automatic on Boot</div>
+    
+    <div class="step-row">
+      <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">1</div>
+      <div class="step-text">
+        <span class="step-auto">[AUTO]</span> Ubuntu boots. Network comes up.
+      </div>
+    </div>
+    
+    <div class="step-row">
+      <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">2</div>
+      <div class="step-text">
+        <span class="step-auto">[AUTO]</span> <span class="step-file">systemd</span> starts <span class="step-cmd">hermes-sift-vm.service</span><br>
+        → <span class="step-cmd">vmrun start SIFT.vmx nogui</span><br>
+        → SIFT VM boots in background (45s to SSH-ready)
+      </div>
+    </div>
+    
+    <div class="step-row">
+      <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">3</div>
+      <div class="step-text">
+        <span class="step-auto">[AUTO]</span> <span class="step-file">~/.config/autostart/</span> launches <span class="step-cmd">hermes-tray</span><br>
+        → System tray icon appears (top-right, near clock)
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">4</div>
+      <div class="step-text">
+        <span class="step-auto">[AUTO]</span> Docker daemon starts. No containers yet (restart policy removed).
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-dot" style="background:#ca8a04"></div>
+    <div style="font-size:0.7rem">
+      Tray shows: <span style="color:#ca8a04">Pentest: ○ OFF</span> &nbsp;|&nbsp; <span style="color:#ca8a04">Forensics: ○ OFF</span>
+    </div>
+  </div>
+
+  <!-- PHASE 2: USER ACTION -->
+  <div class="flow">
+    <div class="flow-title"><div class="dot" style="background:#fbbf24"></div>PHASE 2 — You Decide</div>
+    
+    <div class="parallel">
+      <!-- PENTEST PATH -->
+      <div class="branch" style="border-color:rgba(34,211,238,0.15)">
+        <div class="branch-title"><span style="color:#22d3ee">🛡️</span> <span style="color:#22d3ee">PENTEST PATH</span></div>
+        
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">5a</div>
+          <div class="step-text">
+            <span class="step-click">[CLICK]</span> Tray → <span style="color:#22d3ee">▶ Start Pentest</span><br>
+            Terminal opens, runs <span class="step-cmd">pentest</span>
+          </div>
+        </div>
+        
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">6a</div>
+          <div class="step-text">
+            <span class="step-auto">[AUTO]</span> <span class="step-cmd">mount-pentest-vault</span><br>
+            → cryptsetup open with <span class="step-file">~/.pentest-keyfile</span><br>
+            → LUKS mounted at <span class="step-file">~/pentest</span><br>
+            <span style="color:#64748b;font-size:0.6rem">No passphrase needed</span>
+          </div>
+        </div>
+        
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">7a</div>
+          <div class="step-text">
+            <span class="step-auto">[AUTO]</span> <span class="step-cmd">pentest-up.sh</span><br>
+            → docker compose up -d (web + net + osint)<br>
+            → Tools pre-installed in images (no apt install)<br>
+            → <span style="color:#34d399">✓ kali-web</span> <span style="color:#34d399">✓ kali-net</span> <span style="color:#34d399">✓ osint-tools</span>
+          </div>
+        </div>
+        
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">8a</div>
+          <div class="step-text">
+            <span class="step-user">[YOU]</span> Open Hermes Desktop<br>
+            → Switch to <span style="color:#22d3ee">pentest profile</span> (bottom-left)<br>
+            → Start <span style="color:#22d3ee">new chat</span><br>
+            → <span class="step-cmd">/skill pentest-engage</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- FORENSICS PATH -->
+      <div class="branch" style="border-color:rgba(167,139,250,0.15)">
+        <div class="branch-title"><span style="color:#a78bfa">🔍</span> <span style="color:#a78bfa">FORENSICS PATH</span></div>
+        
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">5b</div>
+          <div class="step-text">
+            <span class="step-click">[CLICK]</span> Tray → <span style="color:#a78bfa">▶ Start Forensics</span><br>
+            Terminal opens, runs <span class="step-cmd">forensics</span>
+          </div>
+        </div>
+        
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">6b</div>
+          <div class="step-text">
+            <span class="step-auto">[AUTO]</span> <span class="step-cmd">forensics-up.sh</span><br>
+            → LUKS mounts with <span class="step-file">~/.forensics-keyfile</span><br>
+            → SIFT VM already running (from boot)<br>
+            → Waits for SSH on <span style="color:#a78bfa">sansforensics@172.16.146.128</span>
+          </div>
+        </div>
+        
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">7b</div>
+          <div class="step-text">
+            <span class="step-auto">[AUTO]</span> <span class="step-cmd">session-canary.sh</span><br>
+            → Validates all 12 forensic tools<br>
+            → <span style="color:#34d399">✓ Docker tools</span> <span style="color:#34d399">✓ SIFT tools</span>
+          </div>
+        </div>
+        
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">8b</div>
+          <div class="step-text">
+            <span class="step-user">[YOU]</span> Open Hermes Desktop<br>
+            → Switch to <span style="color:#a78bfa">forensics profile</span><br>
+            → Start <span style="color:#a78bfa">new chat</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3: SHUTDOWN -->
+  <div class="flow">
+    <div class="flow-title"><div class="dot" style="background:#fb7185"></div>PHASE 3 — Shutdown</div>
+    
+    <div class="step-row">
+      <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">9</div>
+      <div class="step-text">
+        <span class="step-click">[CLICK]</span> Tray → <span style="color:#fb7185">■ Stop Pentest</span> / <span style="color:#fb7185">■ Stop Forensics</span><br>
+        → <span class="step-cmd">pentest-down.sh</span> stops containers + unmounts LUKS<br>
+        → <span class="step-cmd">forensics-down.sh</span> stops SIFT VM + unmounts LUKS
+      </div>
+    </div>
+    
+    <div class="step-row">
+      <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">10</div>
+      <div class="step-text">
+        <span class="step-auto">[AUTO]</span> Everything encrypted at rest. Safe to power off.
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOVERY -->
+  <div class="flow" style="border-color:rgba(251,191,36,0.15)">
+    <div class="flow-title"><div class="dot" style="background:#ca8a04"></div>THINGS GO WRONG?</div>
+    
+    <div style="font-size:0.65rem;color:#94a3b8;line-height:1.8">
+      <span style="color:#fbbf24">📋 View Log</span> → tray menu → opens today's startup log<br>
+      <span style="color:#22d3ee">🔧 Repair</span> → <span class="step-cmd">pentest-repair.sh</span> — diagnose + auto-fix<br>
+      <span style="color:#a78bfa">📖 Troubleshooting</span> → <span class="step-cmd">cat ~/pentest-repo/docs/TROUBLESHOOTING.md</span><br>
+      <span style="color:#34d399">🧠 Skill</span> → <span class="step-cmd">/skill pentest-ops</span> in any Hermes chat
+    </div>
+  </div>
+
+  <div class="legend">
+    <div><span class="step-auto">[AUTO]</span> Automatic</div>
+    <div><span class="step-user">[YOU]</span> You type/click</div>
+    <div><span class="step-click">[CLICK]</span> Tray button</div>
+  </div>
+</div>
+</body>
+</html>

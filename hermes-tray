@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""Hermes Lab Tray — minimised, status-only, click to start/stop."""
+import subprocess, threading, os, time, shutil
+
+try:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    gi.require_version('AppIndicator3', '0.1')
+    from gi.repository import Gtk, AppIndicator3, GLib
+except ImportError:
+    print("Missing deps: sudo apt install python3-gi gir1.2-gtk-3.0 gir1.2-appindicator3-0.1")
+    exit(1)
+
+def check(cmd):
+    try: return subprocess.run(cmd, shell=True, capture_output=True, timeout=2).returncode == 0
+    except: return False
+
+def terminal(cmd):
+    term = shutil.which('x-terminal-emulator') or 'xterm'
+    subprocess.Popen([term, '--', 'bash', '-c', f'{cmd}; echo; read -p "Press Enter..."'])
+
+class LabTray:
+    def __init__(self):
+        self.ind = AppIndicator3.Indicator.new("hermes", "utilities-terminal",
+            AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+        self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        self._build()
+        GLib.timeout_add_seconds(5, self._refresh)
+        Gtk.main()
+
+    def _build(self):
+        m = Gtk.Menu()
+        self._status = Gtk.MenuItem(label="Checking...")
+        self._status.set_sensitive(False)
+        m.append(self._status)
+        m.append(Gtk.SeparatorMenuItem())
+
+        for label, cmd in [
+            ("▶  Start Pentest", "pentest"),
+            ("■  Stop Pentest",  "bash ~/pentest-repo/scripts/pentest-down.sh"),
+            ("🔒 VPN ON",   "sudo wg-quick up wg0 2>/dev/null && echo 'VPN connected' || echo 'VPN failed'"),
+            ("🔓 VPN OFF",  "sudo wg-quick down wg0 2>/dev/null; echo 'VPN disconnected'"),
+            ("▶  Start Forensics","forensics"),
+            ("■  Stop Forensics","bash ~/forensics/scripts/forensics-down.sh"),
+        ]:
+            item = Gtk.MenuItem(label=label)
+            item.connect("activate", lambda _,c=cmd: terminal(c))
+            m.append(item)
+
+        m.append(Gtk.SeparatorMenuItem())
+        q = Gtk.MenuItem(label="Quit")
+        q.connect("activate", lambda _: Gtk.main_quit())
+        m.append(q)
+        m.show_all()
+        self.ind.set_menu(m)
+
+    def _refresh(self):
+        # Pentest: just check LUKS + one container running
+        p_luks = check("mountpoint -q /home/niel/pentest")
+        p_ok = check("docker ps --format '{{.Names}}' | grep -q kali-web")
+        p = "✓ READY" if p_luks and p_ok else ("⚠ ON" if p_luks else "○ OFF")
+
+        # Forensics: just check LUKS + SIFT VM up
+        f_luks = check("mountpoint -q /home/niel/forensics")
+        f_ok = check("ssh -o ConnectTimeout=2 -o BatchMode=yes sansforensics@172.16.146.128 true >/dev/null 2>&1")
+        f = "✓ READY" if f_luks and f_ok else ("⚠ ON" if f_luks else "○ OFF")
+
+        self._status.set_label(f"Pentest: {p}  |  Forensics: {f}")
+        return True
+
+if __name__ == '__main__':
+    LabTray()

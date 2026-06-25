@@ -1,0 +1,36 @@
+#!/bin/bash
+# forensics — One-command bring-up for Hermes Forensics Lab
+# Run BEFORE opening Hermes Desktop. Then switch to forensics profile.
+set -uo pipefail
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+echo -e "${CYAN}┌─────────────────────────────────────┐"
+echo -e "│  Hermes Forensics Lab — Bring-Up    │"
+echo -e "└─────────────────────────────────────┘${NC}"
+echo ""
+
+# ── Run forensics-up.sh (handles LUKS, SIFT VM, Docker, canary) ──
+if [ -f /home/niel/forensics/scripts/forensics-up.sh ]; then
+    bash /home/niel/forensics/scripts/forensics-up.sh 2>/dev/null
+    UP_OK=$?
+else
+    echo -e "${RED}✗ forensics-up.sh not found${NC}"
+    exit 1
+fi
+
+echo ""
+echo -e "${CYAN}──────────────────────────────────────${NC}"
+if [ $UP_OK -eq 0 ]; then
+    echo -e "${GREEN}✅ Forensics Lab READY${NC}"
+else
+    echo -e "${YELLOW}⚠️  Some tools degraded — check canary output${NC}"
+fi
+echo ""
+echo "Next: Switch to forensics profile in Hermes Desktop (bottom-left)"
+echo "      or run: hermes desktop --profile forensics"
+echo ""
