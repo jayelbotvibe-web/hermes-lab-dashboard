@@ -25,6 +25,10 @@ This tray app sits in your system notification area. It shows whether each lab i
 └──────────────────────────────────────────┘
 ```
 
+## Architecture Diagram
+
+[**→ View Boot Flow Diagram**](https://jayelbotvibe-web.github.io/hermes-lab-dashboard/) — interactive HTML showing what happens from power-on to ready-to-work.
+
 ## How It Fits Together
 
 ```
