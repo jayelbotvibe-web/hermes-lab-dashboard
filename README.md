@@ -61,17 +61,17 @@ HERMES LAB LAPTOP (Ubuntu)
 
 ```
 Laptop boots
-  → SIFT VM auto-starts (systemd)
-  → Forensics LUKS auto-mounts (crypttab + fstab)
   → Tray appears on login (autostart .desktop)
+  → Nothing else — no LUKS, no VMs, no containers
 
 You click:
-  ▶ Start Pentest → terminal opens → sudo password → LUKS mounts → containers up → ✓ READY
-  🔒 VPN ON       → WireGuard connects (when ready to scan)
+  ▶ Start Pentest   → LUKS keyfile → mount → Docker containers → ✓ READY
+  ▶ Start Forensics → LUKS keyfile → mount → SIFT VM → canary → ✓ READY
+  🔒 VPN ON         → WireGuard connects (when ready to scan)
 
 Done working:
-  ■ Stop Pentest   → containers down → LUKS unmounts
-  ■ Stop Forensics → VM stops → LUKS unmounts
+  ■ Stop Pentest    → containers down → LUKS unmounts
+  ■ Stop Forensics  → VM stops → LUKS unmounts
   → Safe to shut down
 ```
 
@@ -83,7 +83,7 @@ This is built for a SPECIFIC setup:
 - [Hermes Pentest Lab](https://github.com/jayelbotvibe-web/hermes-pentest-lab) installed and configured
 - [Hermes Forensics Lab](https://github.com/jayelbotvibe-web/hermes-forensics-lab) installed and configured
 - LUKS keyfiles at `~/.pentest-keyfile` and `~/.forensics-keyfile`
-- SIFT VM at `/home/niel/vmware/SIFT/SIFT.vmx` (auto-started via systemd)
+- SIFT VM at `/home/niel/vmware/SIFT/SIFT.vmx` (started on-demand via tray)
 - Docker pre-built images: `hermes-kali-web`, `hermes-kali-net`, `hermes-osint-tools`
 
 ## Install
