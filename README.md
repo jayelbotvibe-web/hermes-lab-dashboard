@@ -27,9 +27,9 @@ This tray app sits in your system notification area. It shows whether each lab i
 
 ## Architecture Diagram
 
-[**→ View Boot Flow Diagram**](https://jayelbotvibe-web.github.io/hermes-lab-dashboard/) — interactive HTML showing what happens from power-on to ready-to-work.
+[**→ View Boot Flow Diagram**](https://jayelbotvibe-web.github.io/hermes-lab-management-dashboard/) — interactive HTML showing what happens from power-on to ready-to-work.
 
-[**→ View Manager Architecture**](https://jayelbotvibe-web.github.io/hermes-lab-dashboard/manager-architecture.html) — dark-theme SVG showing how the default profile orchestrates forensics and pentest profiles via one-shot dispatch.
+[**→ View Manager Architecture**](https://jayelbotvibe-web.github.io/hermes-lab-management-dashboard/manager-architecture.html) — dark-theme SVG showing how the default profile orchestrates forensics and pentest profiles via one-shot dispatch.
 
 ## AI Orchestration Layer
 
@@ -46,7 +46,7 @@ HERMES LAB LAPTOP (Ubuntu)
 ├── hermes-forensics-lab/        ← forensics tools, SIFT VM, evidence
 │   └── forensics-up.sh          ← VM startup + canary
 │
-├── hermes-lab-dashboard/  ◄── THIS REPO
+├── hermes-lab-management-dashboard/  ◄── THIS REPO
 │   ├── hermes-tray              ← Gtk system tray app (auto-starts on login)
 │   ├── pentest                  ← wrapper: LUKS mount → pentest-up.sh
 │   └── forensics                ← wrapper: forensics-up.sh
@@ -127,4 +127,4 @@ Update paths in the scripts if your username isn't `niel` or vault paths differ.
 |------|---------|
 | [hermes-pentest-lab](https://github.com/jayelbotvibe-web/hermes-pentest-lab) | 22+ tools, Docker compose, AI subagents, PDF reports |
 | [hermes-forensics-lab](https://github.com/jayelbotvibe-web/hermes-forensics-lab) | 12 forensic tools, SIFT VM, evidence processing |
-| **hermes-lab-dashboard** | ← you are here — cross-repo startup control |
+| **hermes-lab-management-dashboard** | ← you are here — cross-repo startup control |

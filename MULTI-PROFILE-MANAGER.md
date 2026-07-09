@@ -324,7 +324,7 @@ Every dispatch prompt: canary first, then task. Absolute paths. Let the profile 
 |------|------|
 | [hermes-pentest-lab](https://github.com/jayelbotvibe-web/hermes-pentest-lab) | Pentest worker — Docker tools, VPN, reports |
 | [hermes-forensics-lab](https://github.com/jayelbotvibe-web/hermes-forensics-lab) | Forensics worker — Docker + SIFT VM + MemProcFS |
-| **hermes-lab-dashboard** | ← you are here — tray launcher + manager docs |
+| **hermes-lab-management-dashboard** | ← you are here — tray launcher + manager docs |
 
 ## Quick Start (after setup)
 
