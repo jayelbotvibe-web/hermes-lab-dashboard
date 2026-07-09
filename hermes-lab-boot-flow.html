@@ -52,24 +52,19 @@
 
   <div class="flow">
     <div class="flow-title" style="color:#34d399">BOOT — What happens automatically</div>
-    <div class="flow-sub">You turn on the laptop. These things happen without you touching anything.</div>
+    <div class="flow-sub">You turn on the laptop. One thing happens without you touching anything.</div>
     
     <div class="step-row">
       <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">1</div>
-      <div class="step-text"><span class="step-auto">[systemd]</span> SIFT Workstation VM boots in background (VMware, 45s to SSH-ready)</div>
-    </div>
-    <div class="step-row">
-      <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">2</div>
-      <div class="step-text"><span class="step-auto">[crypttab]</span> Forensics LUKS volume auto-mounts at <code>/home/niel/forensics</code></div>
-    </div>
-    <div class="step-row">
-      <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">3</div>
       <div class="step-text"><span class="step-auto">[autostart]</span> Hermes tray icon appears in system notification area (top-right)</div>
     </div>
   </div>
 
   <div class="status-bar">
-    After boot, tray shows: <span style="color:#34d399">Forensics: ✓ READY</span> &nbsp;|&nbsp; <span style="color:#64748b">Pentest: ○ OFF</span>
+    After boot, tray shows: <span style="color:#64748b">Forensics: ○ OFF</span> &nbsp;|&nbsp; <span style="color:#64748b">Pentest: ○ OFF</span>
+  </div>
+  <div class="status-bar" style="border-color:rgba(251,191,36,0.2);margin-top:0.5rem">
+    <span style="color:#fbbf24">Everything is manual.</span> No LUKS volumes are decrypted, no VMs or containers start at boot. Clean, fast, secure.
   </div>
 
   <div class="flow">
@@ -96,8 +91,8 @@
       <div class="branch" style="border-color:rgba(167,139,250,0.15)">
         <div class="branch-title"><span style="color:#a78bfa">🔍 FORENSICS LAB</span></div>
         <div class="step-row">
-          <div class="step-num" style="background:rgba(52,211,153,0.15);color:#34d399">1</div>
-          <div class="step-text"><span class="step-auto">[auto]</span> Already mounted and running — no clicks needed</div>
+          <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">1</div>
+          <div class="step-text"><span class="step-click">[CLICK]</span> ▶ Start Forensics<br>Background dispatch: LUKS keyfile → mount → SIFT VM → Docker → canary → ✓ READY</div>
         </div>
         <div class="step-row">
           <div class="step-num" style="background:rgba(251,191,36,0.15);color:#fbbf24">2</div>

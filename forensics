@@ -14,12 +14,47 @@ echo -e "│  Hermes Forensics Lab — Bring-Up    │"
 echo -e "└─────────────────────────────────────┘${NC}"
 echo ""
 
-# ── Run forensics-up.sh (handles LUKS, SIFT VM, Docker, canary) ──
-if [ -f /home/niel/forensics/scripts/forensics-up.sh ]; then
-    bash /home/niel/forensics/scripts/forensics-up.sh 2>/dev/null
+FORENSICS_DIR="/home/niel/forensics"
+LUKS_IMG="/home/niel/forensics.img"
+LUKS_NAME="forensics_crypt"
+LUKS_KEYFILE="/home/niel/.forensics-keyfile"
+
+# ── Phase 1: LUKS open + mount (inline, not from vault) ──
+if mountpoint -q "$FORENSICS_DIR" 2>/dev/null; then
+    echo -e "  ${GREEN}✓${NC} Already mounted"
+else
+    if [ ! -f "$LUKS_KEYFILE" ]; then
+        echo -e "  ${RED}✗${NC} Keyfile not found at $LUKS_KEYFILE"
+        echo "  Run: echo -n '<password>' > ~/.forensics-keyfile && chmod 600 ~/.forensics-keyfile"
+        exit 1
+    fi
+    echo -n "  Opening LUKS..."
+    sudo cryptsetup close "$LUKS_NAME" 2>/dev/null || true
+    if sudo cryptsetup open "$LUKS_IMG" "$LUKS_NAME" --key-file="$LUKS_KEYFILE" 2>/dev/null; then
+        echo -e " ${GREEN}OK${NC}"
+    else
+        echo -e " ${RED}FAILED${NC}"
+        exit 1
+    fi
+    echo -n "  Mounting..."
+    if sudo mount /dev/mapper/"$LUKS_NAME" "$FORENSICS_DIR" 2>/dev/null; then
+        echo -e " ${GREEN}OK${NC}"
+    else
+        echo -e " ${RED}FAILED${NC}"
+        exit 1
+    fi
+fi
+
+df -h "$FORENSICS_DIR" 2>/dev/null | tail -1 | awk '{printf "  %s used / %s total\n", $3, $2}'
+
+# ── Phase 2: Run forensics-up.sh (SIFT VM, Docker, canary) ──
+echo ""
+if [ -f "$FORENSICS_DIR/scripts/forensics-up.sh" ]; then
+    # Skip LUKS phase since we already handled it; forensics-up.sh will see it's mounted
+    bash "$FORENSICS_DIR/scripts/forensics-up.sh"
     UP_OK=$?
 else
-    echo -e "${RED}✗ forensics-up.sh not found${NC}"
+    echo -e "${RED}✗ forensics-up.sh not found inside vault${NC}"
     exit 1
 fi
 

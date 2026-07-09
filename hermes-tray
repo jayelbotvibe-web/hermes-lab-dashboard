@@ -15,9 +15,20 @@ def check(cmd):
     try: return subprocess.run(cmd, shell=True, capture_output=True, timeout=2).returncode == 0
     except: return False
 
-def terminal(cmd):
+def run_term(cmd):
+    """Open a terminal for quick commands (VPN). Terminal closure doesn't matter."""
     term = shutil.which('x-terminal-emulator') or 'xterm'
     subprocess.Popen([term, '--', 'bash', '-c', f'{cmd}; echo; read -p "Press Enter..."'])
+
+def run_bg(cmd):
+    """Run a lab command detached from the tray. Survives tray restart/terminal close."""
+    subprocess.Popen(['bash', '-c', cmd],
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     start_new_session=True)
+    # Flash a notification so the user knows something is happening
+    subprocess.Popen(['notify-send', 'Hermes Lab', f'Running: {cmd}',
+                      '--icon=utilities-terminal', '--expire-time=3000'],
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 class LabTray:
     def __init__(self):
@@ -35,16 +46,19 @@ class LabTray:
         m.append(self._status)
         m.append(Gtk.SeparatorMenuItem())
 
-        for label, cmd in [
-            ("▶  Start Pentest", "pentest"),
-            ("■  Stop Pentest",  "bash ~/pentest-repo/scripts/pentest-down.sh"),
-            ("🔒 VPN ON",   "sudo wg-quick up wg0 2>/dev/null && echo 'VPN connected' || echo 'VPN failed'"),
-            ("🔓 VPN OFF",  "sudo wg-quick down wg0 2>/dev/null; echo 'VPN disconnected'"),
-            ("▶  Start Forensics","forensics"),
-            ("■  Stop Forensics","bash ~/forensics/scripts/forensics-down.sh"),
+        # Lab start/stop → background (must survive terminal close)
+        # VPN → terminal (quick commands, output is useful)
+        for label, cmd, bg in [
+            ("▶  Start Pentest",    "pentest",                                      True),
+            ("■  Stop Pentest",     "bash ~/pentest-repo/scripts/pentest-down.sh",  True),
+            ("🔒 VPN ON",           "sudo wg-quick up wg0 2>/dev/null && echo 'VPN connected' || echo 'VPN failed'", False),
+            ("🔓 VPN OFF",          "sudo wg-quick down wg0 2>/dev/null; echo 'VPN disconnected'", False),
+            ("▶  Start Forensics",  "forensics",                                    True),
+            ("■  Stop Forensics",   "forensics-stop",                               True),
         ]:
             item = Gtk.MenuItem(label=label)
-            item.connect("activate", lambda _,c=cmd: terminal(c))
+            fn = run_bg if bg else run_term
+            item.connect("activate", lambda _,c=cmd,f=fn: f(c))
             m.append(item)
 
         m.append(Gtk.SeparatorMenuItem())
@@ -55,15 +69,13 @@ class LabTray:
         self.ind.set_menu(m)
 
     def _refresh(self):
-        # Pentest: just check LUKS + one container running
         p_luks = check("mountpoint -q /home/niel/pentest")
         p_ok = check("docker ps --format '{{.Names}}' | grep -q kali-web")
         p = "✓ READY" if p_luks and p_ok else ("⚠ ON" if p_luks else "○ OFF")
 
-        # Forensics: just check LUKS + SIFT VM up
         f_luks = check("mountpoint -q /home/niel/forensics")
         f_ok = check("ssh -o ConnectTimeout=2 -o BatchMode=yes sansforensics@172.16.146.128 true >/dev/null 2>&1")
-        f = "✓ READY" if f_luks and f_ok else ("⚠ ON" if f_luks else "○ OFF")
+        f = "✓ READY" if f_luks and f_ok else "○ OFF"
 
         self._status.set_label(f"Pentest: {p}  |  Forensics: {f}")
         return True
